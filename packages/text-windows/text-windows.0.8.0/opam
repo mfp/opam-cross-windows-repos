@@ -1,0 +1,23 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+   "ocaml" "setup.ml" "-configure"
+       "--prefix" "%{prefix}%/windows-sysroot"
+       "--override" "ext_dll" ".dll"
+       "--override" "iconv_prefix" "."
+       "--override" "need_liconv" "true"
+       "--%{pcre-windows:enable}%-pcre" "--disable-tests"
+  ]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-build"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-install"]
+]
+remove: [["ocamlfind" "-toolchain" "windows" "remove" "text"]]
+depends: [
+  "ocamlfind" {build}
+  "base-bytes"
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
+depopts: ["pcre-windows"]
+dev-repo: "git://github.com/vbmithr/ocaml-text"
