@@ -1,0 +1,45 @@
+--- a/myocamlbuild.ml	2016-05-03 21:13:33.669507114 +0000
++++ b/myocamlbuild.ml	2016-05-03 21:28:51.817030713 +0000
+@@ -796,10 +796,16 @@
+           List.map cnv chunks
+         in
+         let osqlite3_cflags =
+-          let cmd = pkg_export ^ " pkg-config --cflags sqlite3" in
+-          match read_lines_from_cmd ~max_lines:1 cmd with
+-          | [cflags] -> S (ocamlify ~ocaml_flag:"-ccopt" cflags)
+-          | _ -> failwith "pkg-config failed for cflags"
++          let cflags =
++            try
++              Sys.getenv "SQLITE3_CFLAGS"
++            with _ -> 
++              let cmd = pkg_export ^ " pkg-config --cflags sqlite3" in
++              match read_lines_from_cmd ~max_lines:1 cmd with
++                | [cflags] -> cflags
++                | _ -> failwith "pkg-config failed for cflags"
++          in
++            S (ocamlify ~ocaml_flag:"-ccopt" cflags)
+         in
+         let osqlite3_cflags =
+           try
+@@ -811,11 +817,16 @@
+           with _ -> osqlite3_cflags
+         in
+         let sqlite3_clibs, osqlite3_clibs =
+-          let cmd = pkg_export ^ " pkg-config --libs sqlite3" in
+-          match read_lines_from_cmd ~max_lines:1 cmd with
+-          | [libs] ->
+-              S (split_flags libs), S (ocamlify ~ocaml_flag:"-cclib" libs)
+-          | _ -> failwith "pkg-config failed for libs"
++          let libs =
++            try
++              Sys.getenv "SQLITE3_CLIBS"
++            with _ ->
++	      let cmd = pkg_export ^ " pkg-config --libs sqlite3" in
++	      match read_lines_from_cmd ~max_lines:1 cmd with
++              | [libs] -> libs
++              | _ -> failwith "pkg-config failed for libs"
++          in
++            S (split_flags libs), S (ocamlify ~ocaml_flag:"-cclib" libs)
+         in
+         flag ["compile"; "c"] osqlite3_cflags;
+         flag ["link"; "ocaml"; "library"] osqlite3_clibs;

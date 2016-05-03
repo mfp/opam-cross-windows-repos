@@ -1,0 +1,29 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+authors: [ "Markus Mottl <markus.mottl@gmail.com>"
+           "Christian Szegedy <csdontspam@metamatix.com>" ]
+license: "LGPL-2.1+ with OCaml linking exception"
+homepage: "http://mmottl.github.io/sqlite3-ocaml"
+dev-repo: "https://github.com/mmottl/sqlite3-ocaml.git"
+bug-reports: "https://github.com/mmottl/sqlite3-ocaml/issues"
+tags: [ "clib:sqlite3" "clib:pthread"  ]
+patches: ["patches/cross-compiling.patch"]
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml"
+      "-configure" "--prefix" "%{prefix}%/windows-sysroot" "--override" "ext_dll" ".dll"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "SQLITE3_CLIBS=-lsqlite3" "SQLITE3_CFLAGS="
+      "ocaml" "setup.ml" "-build"]
+]
+install: ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-install"]
+remove: [
+  ["ocamlfind" "-toolchain" "windows" "remove" "sqlite3"]
+]
+depends: [
+  "ocamlfind" {build & >= "1.3.1"}
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
+available: [ ocaml-version >= "3.12" ]
+depexts: [
+  [["mxe"] ["sqlite"]]
+]
