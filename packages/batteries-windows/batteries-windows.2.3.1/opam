@@ -1,0 +1,26 @@
+opam-version: "1.2"
+name: "batteries"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+homepage: "http://batteries.forge.ocamlcore.org/"
+license: "LGPL-2.1+ with OCaml linking exception"
+patches : [ "patches/cross-compilation.patch" ]
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+   "ocaml" "setup.ml" "-configure" "--prefix" "%{prefix}%/windows-sysroot"
+                                   "--override" "ext_dll" ".dll"]
+  ["ocamlbuild"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" make "all"]
+]
+install: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" make "install"]
+]
+remove: [
+  ["ocamlfind" "-toolchain" "windows" "remove" "batteries"]
+]
+depends: [
+  "ocamlfind" {>= "1.5.3"}
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
+ocaml-version: [>= "3.12.1" & < "4.03.0"]
+dev-repo: "git://github.com/ocaml-batteries-team/batteries-included"

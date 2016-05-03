@@ -1,0 +1,43 @@
+From a15079870ddc4b18291399a28986ee06fe8bc853 Mon Sep 17 00:00:00 2001
+From: Mauricio Fernandez <mfp@acm.org>
+Date: Tue, 3 May 2016 17:02:45 +0000
+Subject: [PATCH] Interpret mkconf.ml directly (instead of building bytecode
+ executable).
+
+---
+ myocamlbuild.ml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/myocamlbuild.ml b/myocamlbuild.ml
+index ace5994..f01fd5a 100644
+--- a/myocamlbuild.ml
++++ b/myocamlbuild.ml
+@@ -12,7 +12,7 @@ let ocamlfind x = S[A"ocamlfind"; A x]
+ let packs = "bigarray,num,str"
+ 
+ let doc_intro = "build/intro.text"
+-let mkconf = "build/mkconf.byte"
++let mkconf = "build/mkconf.ml"
+ let compiler_libs = if Sys.ocaml_version.[0] = '4' then [A"-I"; A"+compiler-libs"] else []
+ (* removes the trailing newlines in the stdout of s *)
+ let run_and_read s =
+@@ -57,14 +57,14 @@ let _ = dispatch begin function
+         ~prod:"%.ml"
+         ~deps:["%.mlp"; mkconf]
+         begin fun env build ->
+-          Cmd(S[A"ocamlrun"; P mkconf; P(env "%.mlp"); P(env "%.ml")])
++          Cmd(S[A"ocaml"; P "str.cma"; P mkconf; P(env "%.mlp"); P(env "%.ml")])
+         end;
+ 
+       rule "process meta file"
+         ~prod:"META"
+         ~deps:["META.in"; mkconf]
+         begin fun env build ->
+-          Cmd(S[A"ocamlrun"; P mkconf; P"META.in"; P"META"])
++          Cmd(S[A"ocaml"; P "str.cma"; P mkconf; P"META.in"; P"META"])
+         end;
+ 
+       rule "code coverage"
+-- 
+2.1.4
+
