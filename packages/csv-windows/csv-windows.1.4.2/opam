@@ -1,0 +1,34 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+authors: [ "Richard Jones"
+           "Christophe Troestler" ]
+license: "LGPL-2.1 with OCaml linking exception"
+homepage: "https://github.com/Chris00/ocaml-csv"
+dev-repo: "https://github.com/Chris00/ocaml-csv.git"
+bug-reports: "https://github.com/Chris00/ocaml-csv/issues"
+tags: [ "database" "science"  ]
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+     "ocaml" "setup.ml" "-configure"
+       "--prefix" "%{prefix}%/windows-sysroot"
+       "--override" "ext_dll" ".dll"
+  ]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-build"]
+]
+install:
+  [
+    ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-install"]
+    ["rm" "-f" "%{prefix}%/windows-sysroot/bin/csvtool"]
+    ["ln" "-sf" "%{bin}%/csvtool" "%{prefix}%/windows-sysroot/bin/"]
+  ]
+remove: [
+  ["ocamlfind" "-toolchain" "windows" "remove" "csv" ]
+  ["rm" "-f" "%{prefix}%/windows-sysroot/bin/csvtool"]
+]
+depends: [
+  "base-bytes"
+  "csv"
+  "ocamlfind" {build & >= "1.5"}
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
