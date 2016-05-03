@@ -1,0 +1,28 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+authors: [ "Markus Mottl <markus.mottl@gmail.com>" ]
+license: "LGPL-2.1+ with OCaml linking exception"
+homepage: "http://mmottl.github.io/pcre-ocaml"
+dev-repo: "https://github.com/mmottl/pcre-ocaml.git"
+bug-reports: "https://github.com/mmottl/pcre-ocaml/issues"
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+   "ocaml" "setup.ml" "-configure"
+       "--prefix" "%{prefix}%/windows-sysroot"
+       "--override" "ext_dll" ".dll"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-build"]
+]
+install: ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-install"]
+remove: [
+  ["ocamlfind" "-toolchain" "windows" "remove" "pcre"]
+]
+depends: [
+  "base-bytes"
+  "ocamlfind" {build & >= "1.5"}
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
+available: [ ocaml-version >= "3.12" ]
+depexts: [
+  [["mxe"] ["pcre"]]
+]
