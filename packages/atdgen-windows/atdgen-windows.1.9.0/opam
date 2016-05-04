@@ -1,0 +1,33 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+authors: ["Martin Jambon"]
+
+homepage: "https://github.com/mjambon/atdgen"
+dev-repo: "https://github.com/mjambon/atdgen.git"
+
+build: [ ["env" "OCAMLFIND_TOOLCHAIN=windows" make] ]
+
+install:
+  [ ["env" "OCAMLFIND_TOOLCHAIN=windows" make "findlib-install"]
+    ["ln" "-sf" "%{bin}%/atdgen" "%{prefix}%/windows-sysroot/bin/"]
+    ["ln" "-sf" "%{bin}%/atdgen.run" "%{prefix}%/windows-sysroot/bin/"]
+    ["ln" "-sf" "%{bin}%/atdgen-cppo" "%{prefix}%/windows-sysroot/bin/"]
+    ["ln" "-sf" "%{bin}%/cppo-json" "%{prefix}%/windows-sysroot/bin/"]
+  ]
+
+remove: [
+    ["ocamlfind" "-toolchain" "windows" "remove" "atdgen"]
+    ["rm" "-f" "%{prefix}%/windows-sysroot/bin/atdgen"]
+    ["rm" "-f" "%{prefix}%/windows-sysroot/bin/atdgen.run"]
+    ["rm" "-f" "%{prefix}%/windows-sysroot/bin/atdgen-cppo"]
+    ["rm" "-f" "%{prefix}%/windows-sysroot/bin/cppo-json"]
+]
+
+depends: [
+  "ocamlfind"
+  "atdgen" {= "1.9.0"}
+  "atd-windows" {>= "1.1.0"}
+  "biniou-windows" {>= "1.0.6"}
+  "yojson-windows" {>= "1.2.1" }
+  "ocaml-windows"
+]
