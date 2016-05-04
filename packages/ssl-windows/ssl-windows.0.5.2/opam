@@ -1,0 +1,38 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+author: "Samuel Mimram <samuel.mimram@ens-lyon.org>"
+homepage: "https://github.com/savonet/ocaml-ssl"
+dev-repo: "https://github.com/savonet/ocaml-ssl.git"
+bug-reports: "https://github.com/savonet/ocaml-ssl/issues"
+
+substs: [ "META" ]
+build: [
+  ["ocamlfind" "-toolchain" "windows" "ocamlc"
+      "-ccopt" "-DHAVE_TLS11"
+      "-ccopt" "-DHAVE_TLS12"
+      "-ccopt" "-DHAVE_EC"
+      "-ccopt" "-DHAVE_SNI"
+      "-c" "src/ssl_stubs.c"]
+  ["ocamlfind" "-toolchain" "windows" "ocamlmklib"
+     "-lssl" "-o" "src/ssl" "-ocamlcflags" "-bin-annot" "-I" "src"
+     "src/ssl.mli" "src/ssl_threads.mli" "src/ssl.ml" "src/ssl_threads.ml"
+     "ssl_stubs.o"
+  ]
+]
+install:
+   [["ocamlfind" "-toolchain" "windows" "install"
+       "ssl" "META"
+       "src/ssl.mli" "src/ssl.cmi" "src/ssl.cmti" "src/ssl.cmt" "src/ssl.cmx"
+       "src/ssl_threads.mli" "src/ssl_threads.cmi" "src/ssl_threads.cmti"
+       "src/ssl_threads.cmt" "src/ssl_threads.cmx"
+       "src/ssl.cma" "src/ssl.cmxa" "src/dllssl.dll" "src/libssl.a"
+   ]]
+remove: [["ocamlfind" "-toolchain" "windows" "remove" "ssl"]]
+depends: [
+  "ocamlfind" {build}
+  "ocamlbuild" {build}
+  "ocaml-windows"
+]
+depexts: [
+  [["mxe"] ["openssl"]]
+]
