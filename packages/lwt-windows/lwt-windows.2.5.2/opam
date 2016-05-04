@@ -1,0 +1,69 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+authors: [
+  "Jérôme Vouillon"
+  "Jérémie Dimino"
+]
+homepage: "http://github.com/ocsigen/lwt"
+dev-repo: "git://github.com/ocsigen/lwt"
+license: "LGPL with OpenSSL linking exception"
+build: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+   "ocaml" "setup.ml" "-configure"
+      "--prefix" "%{prefix}%/windows-sysroot"
+      "--datarootdir" "%{prefix}%/windows-sysroot/share"
+      "--override" "ext_dll" ".dll" "--override" "os_type" "Win32"
+      "--override" "flexlink" "%{lib}%/flexdll-windows/flexlink"
+      "--disable-pthread"
+      "--disable-libev"
+      "--disable-camlp4"
+      "--%{react-windows:enable}%-react"
+      "--%{ssl-windows:enable}%-ssl"
+      "--enable-unix"
+      "--enable-preemptive"
+      "--%{lablgtk-windows:enable}%-glib"
+      # "--%{ppx_tools-windows:enable}%-ppx"
+      # disabled for the time being:  compiler-libs/ocamlcommon.cmxa  not available
+      "--disable-ppx"
+  ]
+  ["ocamlbuild" "-use-ocamlfind" "-just-plugin"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-build"]
+]
+install: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocaml" "setup.ml" "-install"]
+  ["ln" "-sf"
+     "%{lib}%/lwt/lwt-syntax-log.a"
+     "%{lib}%/lwt/lwt-syntax-log.cma"
+     "%{lib}%/lwt/lwt-syntax-log.cmxa"
+     "%{lib}%/lwt/lwt-syntax-log.cmxs"
+     "%{lib}%/lwt/lwt-syntax-options.a"
+     "%{lib}%/lwt/lwt-syntax-options.cma"
+     "%{lib}%/lwt/lwt-syntax-options.cmxa"
+     "%{lib}%/lwt/lwt-syntax-options.cmxs"
+     "%{lib}%/lwt/lwt-syntax.a"
+     "%{lib}%/lwt/lwt-syntax.cma"
+     "%{lib}%/lwt/lwt-syntax.cmxa"
+     "%{lib}%/lwt/lwt-syntax.cmxs"
+     "%{prefix}%/windows-sysroot/lib/lwt/"]
+]
+remove: [["ocamlfind" "-toolchain" "windows" "remove" "lwt"]]
+depends: [
+  "ocamlfind" {build & >= "1.5.0"}
+  "base-bytes"
+  ("base-no-ppx" | "ppx_tools-windows")
+  "ocamlbuild" {build}
+  "lwt"
+  "camlp4"
+  "ocaml-windows"
+]
+depopts: [
+  "ssl-windows"
+  "react-windows"
+  "lablgtk-windows"
+]
+conflicts: [
+ "react-windows" {<"1.0.0"}
+ "ssl-windows" {< "0.5.0"}
+ "ppx_tools" {< "1.0.0" }
+]
+available: [ocaml-version >= "4.01.0" & compiler != "4.02.1+BER"]
