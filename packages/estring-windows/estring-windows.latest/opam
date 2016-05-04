@@ -1,0 +1,9 @@
+opam-version: "1"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+install: [
+  ["ln" "-sf" "%{lib}%/estring" "%{prefix}%/windows-sysroot/lib/estring"]
+]
+remove: [
+  ["rm" "-f" "%{prefix}%/windows-sysroot/lib/estring"]
+]
+depends: ["ocaml-windows" "estring"]
