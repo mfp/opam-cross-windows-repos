@@ -1,0 +1,28 @@
+opam-version: "1.2"
+maintainer: "Mauricio Fernandez <mfp@acm.org>"
+homepage: "http://ocurl.forge.ocamlcore.org"
+license: "MIT"
+authors: [ "Lars Nilsson" "ygrek" ]
+doc: ["http://ocurl.forge.ocamlcore.org/api/index.html"]
+dev-repo: "git://github.com/ygrek/ocurl.git"
+bug-reports: "https://github.com/ygrek/ocurl/issues"
+patches: ["patches/cross-compiling.patch"]
+build: [
+  ["cp" "config.h.windows" "config.h"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+      make "-f" "Makefile.msvc" "LIB_EXT=a" "OBJ_EXT=o" "CURLCLIBS=-lcurl"
+        "curl.cma" "curl.cmxa"]
+]
+install: [
+  ["env" "OCAMLFIND_TOOLCHAIN=windows" make "-f" "Makefile.msvc" "install"]
+]
+remove: [["ocamlfind" "-toolchain" "windows" "remove" "curl"]]
+depends: [
+  "ocamlfind" {build}
+  "base-unix"
+  "ocaml-windows"
+]
+depopts: ["lwt-windows"]
+depexts: [
+  [["mxe"] ["curl"]]
+]

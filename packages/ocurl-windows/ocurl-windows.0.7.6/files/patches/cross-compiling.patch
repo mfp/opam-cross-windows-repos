@@ -1,0 +1,71 @@
+--- a/Makefile.msvc	2016-05-04 08:46:47.575881969 +0000
++++ b/Makefile.msvc	2016-05-04 08:59:13.015247817 +0000
+@@ -9,30 +9,33 @@
+ 
+ .PHONY:		all targets examples install clean depend
+ 
+-.SUFFIXES:	.ml .mli .cmx .cmi .cmo .cmxa .cma .c .obj
++LIB_EXT         ?= lib
++OBJ_EXT         ?= obj
+ 
+-OCBYTE		= ocamlc
+-OCOPT		= ocamlopt
++.SUFFIXES:	.ml .mli .cmx .cmi .cmo .cmxa .cma .c .$(OBJ_EXT)
+ 
+-OC		= ocamlc
++OCBYTE		= ocamlfind ocamlc
++OCOPT		= ocamlfind ocamlopt
++
++OC		= ocamlfind ocamlc
+ CC		= cl
+ 
+ FLAGS		=
+ 
+ CFLAGS		=
+-CURLINCDIR	= -I $(CURLDIR)/include
++CURLINCDIR	?= -I $(CURLDIR)/include
+ 
+ CURLIMPORTLIB	= $(CURLDIR)/libcurl_imp.lib
+ 
+ # PR#4783
+-OCAMLMKLIB = ocamlmklib -v -ocamlc ocamlc -ocamlopt ocamlopt
++OCAMLMKLIB = ocamlfind ocamlmklib -v -ocamlc "ocamlfind ocamlc" -ocamlopt "ocamlfind ocamlopt"
+ 
+-CURLHELPEROBJS	= curl-helper.obj
++CURLHELPEROBJS	= curl-helper.$(OBJ_EXT)
+ CURLOBJS	= curl.cmx
+ CURLBCOBJS	= $(CURLOBJS:.cmx=.cmo)
+ 
+ CURLFLAGS	= 
+-CURLCLIBS	= $(CURLIMPORTLIB) ws2_32.lib
++CURLCLIBS	?= $(CURLIMPORTLIB) ws2_32.lib
+ 
+ TARGETS		= curl.cma curl.cmxa
+ 
+@@ -48,7 +51,7 @@
+ curl.cma:	curl.cmi $(CURLBCOBJS) dllcurl-helper.dll
+ 		$(OCAMLMKLIB) -o curl $(CURLBCOBJS) -oc curl-helper
+ 
+-curl.cmxa: curl.cmi $(CURLOBJS) libcurl-helper.lib
++curl.cmxa: curl.cmi $(CURLOBJS) libcurl-helper.$(LIB_EXT)
+ 		$(OCAMLMKLIB) -o curl $(CURLOBJS) -oc curl-helper
+ 
+ .ml.cmx:
+@@ -60,14 +63,14 @@
+ .ml.cmo:
+ 		$(OCBYTE) -c $(FLAGS) $< -o $@
+ 
+-libcurl-helper.lib dllcurl-helper.dll:	$(CURLHELPEROBJS)
++libcurl-helper.$(LIB_EXT) dllcurl-helper.dll:	$(CURLHELPEROBJS)
+ 		$(OCAMLMKLIB) -oc curl-helper $(CURLHELPEROBJS) $(CURLCLIBS)
+ 
+-.c.obj:
++.c.$(OBJ_EXT):
+ 		$(OC) -c $(CFLAGS) -ccopt -DHAVE_CONFIG_H $(CURLINCDIR) $< -o $@
+ 
+ install:
+-		ocamlfind install -ldconf ignore curl META $(wildcard *.cmi *.lib *.cma *.cmxa *.cmx *.dll *.mli)
++		ocamlfind install -ldconf ignore curl META $(wildcard *.cmi *.$(LIB_EXT) *.cma *.cmxa *.cmx *.dll *.mli)
+ 
+ uninstall:
+ 		ocamlfind remove curl
