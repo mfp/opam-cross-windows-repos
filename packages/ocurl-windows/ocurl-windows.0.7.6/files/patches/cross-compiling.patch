@@ -60,8 +60,9 @@
  		$(OCAMLMKLIB) -oc curl-helper $(CURLHELPEROBJS) $(CURLCLIBS)
  
 -.c.obj:
+-		$(OC) -c $(CFLAGS) -ccopt -DHAVE_CONFIG_H $(CURLINCDIR) $< -o $@
 +.c.$(OBJ_EXT):
- 		$(OC) -c $(CFLAGS) -ccopt -DHAVE_CONFIG_H $(CURLINCDIR) $< -o $@
++		$(OC) -c $(CFLAGS) -ccopt -DCURL_STATICLIB -ccopt -DHAVE_CONFIG_H $(CURLINCDIR) $< -o $@
  
  install:
 -		ocamlfind install -ldconf ignore curl META $(wildcard *.cmi *.lib *.cma *.cmxa *.cmx *.dll *.mli)
