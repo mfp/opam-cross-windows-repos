@@ -14,11 +14,14 @@ build: [
       "-ccopt" "-DHAVE_SNI"
       "-c" "src/ssl_stubs.c"]
   ["ocamlfind" "-toolchain" "windows" "ocamlmklib"
-     "-lssl" "-o" "src/ssl" "-ocamlcflags" "-bin-annot" "-I" "src"
-     "src/ssl.mli" "src/ssl.ml" "ssl_stubs.o"
+     "-lssl" "-o" "src/ssl" "-oc" "src/ssl_stubs"
+     "-ocamlcflags" "-bin-annot" "-I" "src"
+     "ssl_stubs.o" "src/ssl.mli" "src/ssl.ml"
   ]
   ["ocamlfind" "-toolchain" "windows" "ocamlmklib"
-     "-o" "src/ssl_threads" "-ocamlcflags" "-bin-annot" "-I" "src"
+     "-lssl" "-o" "src/ssl_threads" "-oc" "src/ssl_threads_stubs"
+     "-ocamlcflags" "-bin-annot" "-I" "src"
+     "ssl_stubs.o" "src/ssl.mli" "src/ssl.ml"
      "src/ssl_threads.mli" "src/ssl_threads.ml"
   ]
 ]
@@ -30,7 +33,8 @@ install:
        "src/ssl_threads.cmt" "src/ssl_threads.cmx"
        "src/ssl.cma" "src/ssl.cmxa"
        "src/ssl_threads.cma" "src/ssl_threads.cmxa"
-       "src/dllssl.dll" "src/libssl.a" "src/ssl.a" "src/ssl_threads.a"
+       "src/dllssl_stubs.dll" "src/libssl_stubs.a" "src/ssl.a"
+       "src/dllssl_threads_stubs.dll" "src/libssl_threads_stubs.a" "src/ssl_threads.a"
    ]]
 remove: [["ocamlfind" "-toolchain" "windows" "remove" "ssl"]]
 depends: [
