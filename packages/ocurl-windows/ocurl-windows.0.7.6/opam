@@ -14,7 +14,8 @@ build: [
         "curl.cma" "curl.cmxa"]
 ]
 install: [
-  ["env" "OCAMLFIND_TOOLCHAIN=windows" make "-f" "Makefile.msvc" "install"]
+  ["env" "OCAMLFIND_TOOLCHAIN=windows"
+     make "-f" "Makefile.msvc" "install" "LIB_EXT=a"]
 ]
 remove: [["ocamlfind" "-toolchain" "windows" "remove" "curl"]]
 depends: [
