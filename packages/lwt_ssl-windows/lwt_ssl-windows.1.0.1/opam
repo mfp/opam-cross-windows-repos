@@ -1,0 +1,29 @@
+opam-version: "1.2"
+name: "lwt_ssl"
+version: "1.0.1"
+maintainer: [
+  "Mauricio Fernandez <mfp@acm.org>"
+]
+authors: [
+  "Jérémie Dimino"
+]
+homepage: "https://github.com/ocsigen/lwt"
+doc: "https://ocsigen.org/lwt/manual/"
+dev-repo: "https://github.com/ocsigen/lwt.git"
+bug-reports: "https://github.com/ocsigen/lwt/issues"
+license: "LGPL with OpenSSL linking exception"
+build: [
+    ["env" "OCAMLFIND_TOOLCHAIN=windows" make "configure"]
+    ["env" "OCAMLFIND_TOOLCHAIN=windows" make "build"]
+]
+install: [
+    ["env" "OCAMLFIND_TOOLCHAIN=windows" make "install"]
+]
+remove: [
+    ["env" "OCAMLFIND_TOOLCHAIN=windows" "ocamlfind" "remove" "lwt_ssl"]
+]
+depends: [
+  "lwt-windows" {>= "3.0.0"}
+  "ssl-windows" {>= "0.5.0"}
+  "base-unix"
+]
